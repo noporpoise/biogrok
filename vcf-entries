@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gzip -fcd $1 | grep -v '^#'
