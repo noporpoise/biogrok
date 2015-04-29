@@ -1,3 +1,14 @@
 #!/bin/bash
 
-gzip -fcd $1 | awk '{if($0 "'!'"~ /^#/ && $1 "'!'"= a) {print $1; a=$1}}'
+#
+# Print the chromosome order of a sorted VCF.
+# Works with .vcf, .vcf.gz and piped input.
+#
+# $ vcf-order in.vcf
+# chr1
+# chr20
+# chr2
+# ...
+#
+
+gzip -fcd $1 | awk '{if($0 ~ !/^#/ && $1 != a) {print $1; a=$1}}'

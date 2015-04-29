@@ -1,3 +1,8 @@
 #!/bin/bash
 
+#
+# Print VCF entries
+# Works with .vcf, .vcf.gz and piped input.
+#
+
 gzip -fcd $1 | grep -v '^#'

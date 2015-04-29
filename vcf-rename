@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#
+# Rename VCF entries id0,id1,...
+# Works with .vcf, .vcf.gz and piped input
+#
+
 gzip -fdc $1 | \
 awk 'BEGIN{ OFS="\t"; id=0; }
 {

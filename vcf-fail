@@ -1,3 +1,8 @@
 #!/bin/bash
 
+#
+# Print VCF header and entries that don't PASS -- e.g. if their filter column
+# is not 'PASS' or '.'. Works with .vcf, .vcf.gz and piped input.
+#
+
 gzip -fcd $1 | awk '$1 ~ /^#/ || $7 !~ /^(PASS|\.)$/'
