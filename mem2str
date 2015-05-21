@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+
+#
+# Convert number of bytes to human readable string (using Kb,Mb,Gb,Tb,Pb)
+#
+
+use strict;
+use warnings;
+
+sub usage { for my $e (@_) { print "Error: $e\n"; } print "$0 [number]\n"; exit(-1); }
+
+if(@ARGV > 1) { usage(); }
+
+my $x = $ARGV[0];
+if(!defined($x) && !defined($x = <>)) { usage("Cannot read in");}
+chomp($x);
+if($x !~ /^\d*\.?\d*(e[+-]\d*)?$/) { usage("Not a number '$x'");}
+
+my @t;
+my $div;
+
+@t = qw(B KiB MiB GiB TiB PiB);
+$div = 1024;
+
+# @t = qw(B kB MB GB TB PB);
+# $div = 1000;
+
+my $i;
+for($i = 0; $x >= $div; $i++) { $x /= $div; }
+
+printf(($i == 0 ? "%d" : "%.2f")." $t[$i]\n", $x);
