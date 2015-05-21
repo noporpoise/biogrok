@@ -7,25 +7,50 @@
 use strict;
 use warnings;
 
-sub usage { for my $e (@_) { print "Error: $e\n"; } print "$0 [number]\n"; exit(-1); }
+use File::Basename;
+my $currdir = dirname(__FILE__);
 
-if(@ARGV > 1) { usage(); }
+# base 1000 or 1024?
+my $use_base_1000 = 0;
 
-my $x = $ARGV[0];
-if(!defined($x) && !defined($x = <>)) { usage("Cannot read in");}
-chomp($x);
-if($x !~ /^\d*\.?\d*(e[+-]\d*)?$/) { usage("Not a number '$x'");}
+sub usage {
+  for my $e (@_) { print STDERR "Error: $e\n"; }
+  print STDERR "$0 [number]\n";
+  exit(-1);
+}
 
-my @t;
-my $div;
+if(@ARGV == 0) {
+  while(defined(my $num = <STDIN>)) { chomp($num); mem2str($num); }
+}
+elsif(@ARGV == 1) {
+  mem2str($ARGV[0]);
+}
+else { usage(); }
 
-@t = qw(B KiB MiB GiB TiB PiB);
-$div = 1024;
+sub mem2str
+{
+  my ($x) = @_;
+  chomp($x);
+  if($x !~ /^\d*\.?\d*(e[+-]\d*)?$/) { usage("Not a number '$x'");}
 
-# @t = qw(B kB MB GB TB PB);
-# $div = 1000;
+  my @t;
+  my $div;
 
-my $i;
-for($i = 0; $x >= $div; $i++) { $x /= $div; }
+  if($use_base_1000) {
+    @t = qw(B kB MB GB TB PB EB);
+    # @t = qw(Kilobyte Megabyte Gigabyte Terabyte Petabyte Exabyte);
+    $div = 1000;
+  } else {
+    @t = qw(B KiB MiB GiB TiB PiB EiB);
+    # @t = qw(Bytes Kibibytes Mebibytes Gibibytes Tebibyte Pebibyte Exbibyte);
+    $div = 1024;
+  }
 
-printf(($i == 0 ? "%d" : "%.2f")." $t[$i]\n", $x);
+  my $i;
+  for($i = 0; $x >= $div && $i+1 < @t; $i++) { $x /= $div; }
+
+  # num2str <num> <sep> <decimals> [force-decimals]
+  $x = `$currdir/num2str $x , 2`;
+  chomp($x);
+  print "$x $t[$i]\n";
+}

@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+
+#
+# Print a number with commas
+#
+
+use strict;
+use warnings;
+
+my ($num,$sep,$num_decimals,$force_decimal) = @ARGV;
+# $num number to format
+# $sep (optional) separator between thousands [default: ',']
+# $num_decimals (optional) up to this num decimals (default all)
+# $force_decimal (optional) if != 0, force $num_decimals
+
+sub usage {
+  for my $e (@_) { print STDERR "Error: $e\n"; }
+  print STDERR "$0 [number] [separator] [decimal-places] [force-decimals]\n";
+  exit(-1);
+}
+
+if(@ARGV == 0) {
+  while(defined($num = <STDIN>)) { chomp($num); num2str($num); }
+}
+elsif(@ARGV <= 4) { num2str(@ARGV); }
+else { usage(); }
+
+sub num2str
+{
+  my ($num,$sep,$num_decimals,$force_decimal) = @_;
+
+  my ($int_digits, $decimal_digits) = ($num =~ /^-?(\d+)\.?(\d+)?$/);
+  if(!defined($int_digits)) { usage("Not a number '$num'"); }
+
+  # add commas or spaces to $int_digits
+  my $initialPlaces = length($int_digits) % 3;
+
+  if($initialPlaces == 0 && length($int_digits) >= 3)
+  {
+    $initialPlaces = 3;
+  }
+
+  my $strNum = substr($int_digits,0,$initialPlaces);
+
+  for(my $i = $initialPlaces; $i <= length($int_digits)-3; $i += 3)
+  {
+    $strNum .= (defined($sep) ? $sep : ",") . substr($int_digits,$i,3);
+  }
+
+  if($num < 0)
+  {
+    $strNum = "-" . $strNum;
+  }
+
+  my $decStr = "";
+
+  if(defined($decimal_digits))
+  {
+    if(!defined($num_decimals) || length($decimal_digits) <= $num_decimals)
+    {
+      $decStr = $decimal_digits;
+    }
+    else
+    {
+      $decStr = substr($decimal_digits, 0, $num_decimals);
+    }
+  }
+
+  if(defined($force_decimal) && $force_decimal && length($decStr) < $num_decimals) {
+    $decStr .= $decStr.("0"x($num_decimals-length($decStr)));
+  }
+
+  if(length($decStr) > 0) {
+    $strNum .= ".".$decStr;
+  }
+
+  print "$strNum\n";
+}
