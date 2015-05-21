@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eou pipefail
+
+currdir="$(dirname "$0")"
+
+# Get virtual memory usage by all processes in human readable
+ps -eo vsize | awk '{s+=$1} END {print s*1024}' | "$currdir/mem2str"
