@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eou pipefail
+
+#
+# Read in first column per line, print:
+# <value> <count>
+# sorted descending by count, then alphabetically by <value>
+#
+
+awk '{n[$1]++} END {for (i in n) print i,n[i]}' | sort -k2nr -k1
