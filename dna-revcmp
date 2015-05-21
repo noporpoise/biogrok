@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+
+#
+# Print reverse complement sequence
+# If we can't complement a character (non-ACGT), leave it unchanged
+# If input is '-', read from STDIN
+#
+
+use strict;
+use warnings;
+
+my %dna;
+@dna{qw(a c g t n A C G T N),"\n"} = (qw(t g c a n T G C A N),"\n");
+
+sub print_revcmp
+{
+  for my $str (@_) {
+    chomp($str);
+    $str = reverse($str);
+    if($str =~ /^[>@]/) { print "$str\n"; }
+    else {
+      print join("", map {defined($dna{$_}) ? $dna{$_} : $_} split("", $str))."\n";
+    }
+  }
+}
+
+if(@ARGV == 0) { push(@ARGV,"-"); }
+for my $str (@ARGV) {
+  if($str eq "-") { map {print_revcmp($_)} <STDIN>; }
+  else { print_revcmp($str); }
+}

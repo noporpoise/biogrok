@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -eou pipefail
+
+#
+# Print lexically lower DNA sequence
+#
+
+my_dir="$(dirname "$0")"
+FW=$1
+RV=`echo $FW | $my_dir/dna-revcmp`
+
+if [[ "$FW" < "$RV" ]]
+then
+  echo "$FW"
+else
+  echo "$RV"
+fi
