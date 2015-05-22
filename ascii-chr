@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#
+# Print a character from its ascii number
+# ascii-chr <char> [char2 ...]
+#
+
+set -eou pipefail
+
+for c in "$@"
+do
+  if [[ "$c" =~ [^0-9] ]] || [[ "$c" -gt 255 ]]; then exit -1; fi
+  printf "\\$(printf '%03o' "$c")\n"
+done

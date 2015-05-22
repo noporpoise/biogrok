@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#
+# Print a number from its ascii character
+# ascii-ord <characters>
+#
+
+set -eou pipefail
+
+LC_CTYPE=C
+
+for str in "$@"
+do
+  for (( i=0; i<${#str}; i++ )); do
+    [[ $i -eq 0 ]] || printf ' '
+    printf '%d' "'${str:$i:1}"
+  done
+  printf '\n'
+done
