@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#
+# Print strings in reverse
+#
+
+set -eou pipefail
+
+for str in "$@"
+do
+  for (( i=$[${#str}-1]; i>=0; i-- )); do
+    echo -n "${str:$i:1}"
+  done
+  echo ''
+done
