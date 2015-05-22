@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#
+# Print arguments in upper case
+#
+
+set -eou pipefail
+
+for str in "$@"
+do
+  echo "$str" | awk '{print toupper($0)}'
+done
