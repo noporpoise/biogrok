@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#
+# Print length of argument strings
+#
+
+set -eou pipefail
+
+for str in "$@"
+do
+  echo ${#str}
+done
