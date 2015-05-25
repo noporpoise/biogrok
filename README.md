@@ -5,6 +5,8 @@ in your own projects.
 
 Most tools use only standard linux tools `bash`, `grep`, `awk` and `perl`.
 
+Some tools require `samtools`.
+
 Files do not have extensions, so implementations can be changed without changing command names. Some files scripts call other scripts in this repo. 
 
 License: MIT
