@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#
+# String comparison (case sensitive)
+#
+
+set -eou pipefail
+
+if (( $# != 2 )); then
+  echo "$0 <str1> <str2>" 1>&2
+  echo "  Print <0 iff str1 < str2, 0 iff str1==str2, >0 iff str1>str2" 1>&2;
+  exit -1
+fi
+
+if [ "$1" = "$2" ] ; then
+  echo 0
+elif [ "$1" '>' "$2" ] ; then
+  echo 1
+else
+  echo -1
+fi

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#
+# String case-insensitive comparison
+#
+
+set -eou pipefail
+
+if (( $# != 2 )); then
+  echo "$0 <str1> <str2>" 1>&2
+  echo "  Print <0 iff str1 < str2, 0 iff str1==str2, >0 iff str1>str2" 1>&2;
+  exit -1
+fi
+
+s1=$(echo "$1" | awk '{print tolower($0)}')
+s2=$(echo "$2" | awk '{print tolower($0)}')
+
+if [ "$s1" = "$s2" ] ; then
+  echo 0
+elif [ "$s1" '>' "$s2" ] ; then
+  echo 1
+else
+  echo -1
+fi
