@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -eou pipefail
+
+#
+# Rename a sample in a VCF file, print to STDOUT
+# Requires: bcftools
+# Calls: vcf-header
+#
+
+currdir="$(dirname "$0")"
+
+function usage {
+  echo "usage: $0 <file.vcf[.gz]> <sample-name> <new-sample-name>" 1>&2;
+  exit -1
+}
+
+if (( $# != 3 )) || [ "$1" == "-" ]; then
+  usage
+fi
+
+file=$1
+sample=$2
+newname=$3
+
+# Get header with bgzip
+IFS=''
+TAB=$(printf "\t")
+oldhdr=$($currdir/vcf-header $file)
+hdrs=$(echo $oldhdr | sed '$ d') # drop last line from hdr
+cols=$(echo "$oldhdr" | tail -1 | sed "s/[[:<:]]$sample[[:>:]]/$newname/g")
+# [[:<:]] is word start
+# [[:>:]] is word end
+
+bcftools reheader --header <(echo $hdrs; echo $cols) $file
