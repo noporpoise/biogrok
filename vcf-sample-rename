@@ -10,7 +10,8 @@ set -eou pipefail
 currdir="$(dirname "$0")"
 
 function usage {
-  echo "usage: $0 <sample-name> <new-sample-name> [file.vcf[.gz]]" 1>&2;
+  echo "usage: $0 <sample-name> <new-sample-name> [file.vcf[.gz]]" 1>&2
+  echo "  Rename a sample in a VCF file/steam. Prints uncompressed VCF to STDOUT." 1>&2
   exit -1
 }
 

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -eou pipefail
+
+#
+# Add contig tags to VCF header. 
+#
+
+function usage {
+  echo "$0 <chrs.bed> <assembly-name> [in.vcf]" 1>&2
+  echo "  Add contig tags to a VCF header" 1>&2
+  echo "  <chrs.bed> format should be: <chrom><tab><len>" 1>&2
+  echo "  e.g. $0 <(dnacat --lengths hg19.fa) hg19 in.vcf > out.vcf" 1>&2
+  exit -1
+}
+
+if (( $# < 2 || $# > 3 )); then
+  usage
+fi
+
+bedfile=$1
+asm_name=$2
+if (( $# == 3 )); then
+  vcffile=$3
+else
+  vcffile=
+fi
+
+# Load BED file of chrom lengths
+ids=( )
+lengths=( )
+
+for f in "$@"
+do
+  while read rname len
+  do
+  #   # Add to arrays
+    ids+=$rname
+    lengths+=$len
+  done < "$bedfile"
+done
+
+nchroms=${#ids[*]}
+
+gzip -fcd $vcffile | \
+( while IFS= read -r c
+  do
+    if [[ $c =~ ^#CHROM ]]; then
+      # Print new header lines
+      for (( i=0; i<$nchroms; i++ ))
+      do
+        echo "##contig=<ID=${ids[0]},length=${lengths[0]},assembly=$asm_name>"
+      done
+      echo $c
+      break
+    elif [[ $c =~ ^# ]]; then
+      echo $c
+    else
+      echo $c
+      break
+    fi
+  done;
+  # Print remaining contents of the file
+  cat )
