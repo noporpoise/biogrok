@@ -5,4 +5,4 @@
 # Works with .vcf, .vcf.gz and piped input.
 #
 
-gzip -fcd $1 | grep -v '^#'
+gzip -fcd $1 | grep -v '^#' || true
