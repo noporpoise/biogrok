@@ -2,10 +2,16 @@
 
 set -eou pipefail
 
-currdir="$(dirname "$0")"
+#
+# usage: mem-jobs [n]
+#  Show n most memory intensive processes. n defaults to 30.
+#  Prints pid,rss,vsize,user,command separated by spaces.
+#
 
 n=30
 if [[ $# -eq 1 ]]; then n="$1"; fi
+
+currdir="$(dirname "$0")"
 
 ps -eo pid,rss,vsize,user,command | sort -k"$TAB"2n | tail -"$n" | \
 ( while read -r line;
