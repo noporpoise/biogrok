@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -eou pipefail
+
+currdir="$(dirname "$0")"
+
+n=30
+if [[ $# -eq 1 ]]; then n="$1"; fi
+
+ps -eo pid,rss,vsize,user,command | sort -k"$TAB"2n | tail -"$n" | \
+( while read -r line;
+  do
+    rss=$(echo $line | cut -d' ' -f2 | $currdir/mem2str | tr -d ' ')
+    vsize=$(echo $line | cut -d' ' -f3 | $currdir/mem2str | tr -d ' ')
+    echo $line | awk '{printf "%s %s",$1,"'"$rss $vsize"'"; for(i=4;i<=NF;i++){printf " %s",$i;} printf "\n"; }'
+  done )
