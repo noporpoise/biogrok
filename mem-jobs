@@ -16,7 +16,9 @@ currdir="$(dirname "$0")"
 ps -eo pid,rss,vsize,user,command | sort -k"$TAB"2n | tail -"$n" | \
 ( while read -r line;
   do
-    rss=$(echo $line | cut -d' ' -f2 | $currdir/mem2str | tr -d ' ')
-    vsize=$(echo $line | cut -d' ' -f3 | $currdir/mem2str | tr -d ' ')
+    rss=$((`echo $line | cut -d' ' -f2` * 1024))
+    vsize=$((`echo $line | cut -d' ' -f3` * 1024))
+    rss=$(echo $rss | $currdir/mem2str | tr -d ' ')
+    vsize=$(echo $vsize | $currdir/mem2str | tr -d ' ')
     echo $line | awk '{printf "%s %s",$1,"'"$rss $vsize"'"; for(i=4;i<=NF;i++){printf " %s",$i;} printf "\n"; }'
   done )
