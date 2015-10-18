@@ -21,9 +21,10 @@ fi
 gzip -fdc $args | \
 ( while IFS= read -r c
   do
-    if [[ $c =~ ^# ]]; then
+    if [[ $c =~ ^## ]]; then
       echo $c
-    elif [[ $c != '' ]]; then
+    elif [[ $c =~ ^#CHROM ]]; then
+      echo $c
       break
     fi
   done
