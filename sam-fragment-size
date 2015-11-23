@@ -3,7 +3,7 @@
 # Print mean, median, min, max of abs(TLEN)
 # Requires: R, samtools, awk
 
-samtools view $1 | awk '{print $9}' | head -10000 | Rscript <(echo '
+samtools view $1 | awk '{if($9 < 10000) {print $9}}' | head -10000 | Rscript <(echo '
 d<-scan("stdin", quiet=TRUE)
 d<-abs(d)
 cat("min:",min(d),"\n",sep="")
