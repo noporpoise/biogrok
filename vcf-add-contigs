@@ -34,9 +34,10 @@ for f in "$@"
 do
   while read rname len
   do
-  #   # Add to arrays
-    ids+=$rname
-    lengths+=$len
+    # Add to arrays
+    echo "ID: $rname LEN:$len"
+    ids+=($rname)
+    lengths+=($len)
   done < "$bedfile"
 done
 
@@ -49,7 +50,7 @@ gzip -fcd $vcffile | \
       # Print new header lines
       for (( i=0; i<$nchroms; i++ ))
       do
-        echo "##contig=<ID=${ids[0]},length=${lengths[0]},assembly=$asm_name>"
+        echo "##contig=<ID=${ids[$i]},length=${lengths[$i]},assembly=$asm_name>"
       done
       echo $c
       break

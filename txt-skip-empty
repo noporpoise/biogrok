@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -eou pipefail
+
+awk '{if(length($1)>0){ print $0}}'
