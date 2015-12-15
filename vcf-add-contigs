@@ -35,7 +35,7 @@ do
   while read rname len
   do
     # Add to arrays
-    echo "ID: $rname LEN:$len"
+    # echo "ID: $rname LEN:$len"
     ids+=($rname)
     lengths+=($len)
   done < "$bedfile"
