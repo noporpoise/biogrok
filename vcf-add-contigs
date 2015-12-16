@@ -46,18 +46,18 @@ nchroms=${#ids[*]}
 gzip -fcd $vcffile | \
 ( while IFS= read -r c
   do
-    if [[ $c =~ ^#CHROM ]]; then
+    if [[ "$c" =~ ^#CHROM ]]; then
       # Print new header lines
       for (( i=0; i<$nchroms; i++ ))
       do
         echo "##contig=<ID=${ids[$i]},length=${lengths[$i]},assembly=$asm_name>"
       done
-      echo $c
+      echo "$c"
       break
     elif [[ $c =~ ^# ]]; then
-      echo $c
+      echo "$c"
     else
-      echo $c
+      echo "$c"
       break
     fi
   done;
