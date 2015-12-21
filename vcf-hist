@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -eou pipefail
+
+#
+# Print histogram of event sizes (length(ref)-length(alt))
+#
+
+DIR=$( cd $( dirname ${BASH_SOURCE[0]} ) && pwd )
+HISTDATA=$DIR/hist-data
+
+gzip -fcd $@ | grep -v '^#' | awk '{print length($5)-length($4)}' | $HISTDATA | sort -n
