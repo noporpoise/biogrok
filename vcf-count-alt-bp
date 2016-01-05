@@ -8,7 +8,7 @@ use strict;
 use warnings;
 
 use List::Util qw(reduce min max sum);
-use IO::Uncompress::Gunzip qw($GunzipError);
+# use IO::Uncompress::Gunzip qw($GunzipError);
 
 sub usage {
   for my $e (@_) { print STDERR "Error: $e\n"; }
@@ -27,7 +27,7 @@ my $line;
 # my $vcffh = IO::Uncompress::Gunzip->new($vcffile)
 #   or die "Cannot open $vcffile [$GunzipError]\n";
 my $vcffh;
-open($vcffh, "gzip -fcd $vcffile |") or die("Cannot open $vcffile");
+open($vcffh, "gzip -fcd $vcffile |") or die("Cannot open $vcffile: $!");
 
 while(defined($line = <$vcffh>) && $line =~ /^#/) {}
 while(defined($line)) {
