@@ -1,0 +1,47 @@
+#!/usr/bin/env perl
+
+#
+# Select VCF entries based on ID. IDs are all read in first.
+#
+# usage: vcf-select-id <file-with-ids.txt> [in.vcf.gz]
+#
+
+use strict;
+use warnings;
+
+sub usage {
+  for my $e (@_) { print STDERR "Error: $e\n"; }
+  print STDERR "$0 <file-of-ids.txt> [in.vcf]\n";
+  exit(-1);
+}
+
+if(@ARGV < 1 || @ARGV > 2) { usage(); }
+
+# if vcffile not given, defaults to '-'
+my ($idfile,$vcffile) = (@ARGV,"-");
+
+# Load idfile into hash
+my %ids = ();
+my $line;
+my $idfh;
+
+open($idfh, $idfile) or die("Cannot open $idfile");
+while(defined($line = <$idfh>)) {
+  chomp($line);
+  $ids{$line} = 1;
+}
+close($idfh);
+
+# Read VCF
+my $vcffh;
+open($vcffh, "gzip -cd $vcffile |") or die("Cannot open $vcffile");
+
+while(defined($line = <$vcffh>) && $line =~ /^#/) { print "$line"; }
+while(defined($line)) {
+  if($line =~ /^[^\t]+\t[^\t]+\t([^\t]+)/i) {
+    if(defined($ids{$1})) { print "$line"; }
+  } else { die("Bad line: $line"); }
+  $line = <$vcffh>;
+}
+
+close($vcffh);
