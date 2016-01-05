@@ -34,7 +34,7 @@ close($idfh);
 
 # Read VCF
 my $vcffh;
-open($vcffh, "gzip -cd $vcffile |") or die("Cannot open $vcffile");
+open($vcffh, "gzip -fcd $vcffile |") or die("Cannot open $vcffile");
 
 while(defined($line = <$vcffh>) && $line =~ /^#/) { print "$line"; }
 while(defined($line)) {
