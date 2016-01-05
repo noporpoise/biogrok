@@ -26,6 +26,6 @@ sub print_revcmp
 
 if(@ARGV == 0) { push(@ARGV,"-"); }
 for my $str (@ARGV) {
-  if($str eq "-") { map {print_revcmp($_)} <STDIN>; }
+  if($str eq "-") { while(defined(my $line = <STDIN>)) { print_revcmp($line); }}
   else { print_revcmp($str); }
 }
