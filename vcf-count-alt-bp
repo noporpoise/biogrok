@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+
+#
+# Count number of bases in the ALT field after trimming
+#
+
+use strict;
+use warnings;
+
+use List::Util qw(reduce min max sum);
+use IO::Uncompress::Gunzip qw($GunzipError);
+
+sub usage {
+  for my $e (@_) { print STDERR "Error: $e\n"; }
+  print STDERR "$0 [in.vcf]\n";
+  exit(-1);
+}
+
+if(@ARGV > 1) { usage(); }
+
+# if vcffile not given, defaults to '-'
+my ($vcffile) = (@ARGV,"-");
+my $sum = 0;
+my $line;
+
+# Read VCF
+# my $vcffh = IO::Uncompress::Gunzip->new($vcffile)
+#   or die "Cannot open $vcffile [$GunzipError]\n";
+my $vcffh;
+open($vcffh, "gzip -fcd $vcffile |") or die("Cannot open $vcffile");
+
+while(defined($line = <$vcffh>) && $line =~ /^#/) {}
+while(defined($line)) {
+  # print "$line";
+  if($line =~ /^(?:[^\t]+\t){3}([^\t]+)\t([^\t]+)/i) {
+    my ($ref,$alt) = ($1,$2);
+    my @alts = split(',', $alt);
+    my $s = sum_alt_bases($ref,@alts);
+    # print "  $s\n";
+    $sum += $s;
+  } else { die("Bad line: $line"); }
+  $line = <$vcffh>;
+}
+
+close($vcffh);
+print "$sum\n";
+
+# sum_alt_bases(ref,alt1,alt2,...)
+# returns sum of alt bases after trimming
+sub sum_alt_bases
+{
+  my ($ref,@alts) = @_;
+  my ($ltrim,$rtrim) = trim_alleles($ref,@alts);
+  my $trim = $ltrim + $rtrim;
+  # print "$ltrim,$rtrim\n";
+  #
+  # There are three possible approaches here
+  # 1. Only take the first ALT:
+  # return max(length($ref), length($alts[0])) - $trim;
+  # 2. Sum all ALTs:
+  # return sum(map {max(length($_), length($ref))} @alts) - $trim*scalar(@alts);
+  # 3. Take maximum affected bases
+  return (reduce {max($a,$b)} (map {max(length($_), length($ref))} @alts)) - $trim;
+}
+
+sub trim_alleles
+{
+  my ($ref, @alts) = @_;
+  my ($ltrim,$rtrim) = (0,0);
+  my $rlen = length($ref);
+  my $minlen = reduce {min($a,$b)} (map {length($alts[$_])} 0..$#alts);
+
+  while($ltrim < $minlen) {
+    my $rbase = substr($ref, $ltrim, 1);
+    if(sum(map {substr($_,$ltrim,1) eq $rbase} @alts) == @alts) { $ltrim++; }
+    else { last; }
+  }
+
+  $minlen -= $ltrim;
+
+  while($rtrim < $minlen) {
+    my $rbase = substr($ref, -$rtrim-1, 1);
+    if(sum(map {substr($_,-$rtrim-1,1) eq $rbase} @alts) == @alts) { $rtrim++; }
+    else { last; }
+  }
+
+  return ($ltrim, $rtrim);
+}
