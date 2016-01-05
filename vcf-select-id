@@ -9,6 +9,8 @@
 use strict;
 use warnings;
 
+use IO::Uncompress::Gunzip qw($GunzipError);
+
 sub usage {
   for my $e (@_) { print STDERR "Error: $e\n"; }
   print STDERR "$0 <file-of-ids.txt> [in.vcf]\n";
@@ -33,8 +35,8 @@ while(defined($line = <$idfh>)) {
 close($idfh);
 
 # Read VCF
-my $vcffh;
-open($vcffh, "gzip -fcd $vcffile |") or die("Cannot open $vcffile");
+my $vcffh = IO::Uncompress::Gunzip->new($vcffile)
+  or die "Cannot open $vcffile [$GunzipError]\n";
 
 while(defined($line = <$vcffh>) && $line =~ /^#/) { print "$line"; }
 while(defined($line)) {
