@@ -33,12 +33,12 @@ gzip -fcd $file | \
     if [[ $c =~ ^#CHROM ]]; then
       # [[:<:]] is word start
       # [[:>:]] is word end
-      echo $c | tail -1 | sed "s/[[:<:]]$sample[[:>:]]/$newname/g"
+      echo "$c" | tail -1 | sed "s/[[:<:]]$sample[[:>:]]/$newname/g"
       break
     elif [[ $c =~ ^# ]]; then
-      echo $c
+      echo "$c"
     else
-      echo $c
+      echo "$c"
       break
     fi
   done;

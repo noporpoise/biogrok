@@ -22,9 +22,9 @@ gzip -fdc $args | \
 ( while IFS= read -r c
   do
     if [[ $c =~ ^## ]]; then
-      echo $c
+      echo "$c"
     elif [[ $c =~ ^#CHROM ]]; then
-      echo $c
+      echo "$c"
       break
     fi
   done
